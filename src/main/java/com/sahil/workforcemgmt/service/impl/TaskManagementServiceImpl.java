@@ -113,12 +113,6 @@ public class TaskManagementServiceImpl implements TaskManagementService {
 
         List<TaskManagement> filteredTasks = tasks.stream()
                 .filter(t -> t.getStatus() != TaskStatus.CANCELLED)
-                .filter(task -> {
-                    // This logic is incomplete for the assignment.
-                    // It should check against startDate and endDate.
-                    // For now, it just returns all tasks for the assignees.
-                    return true;
-                })
                 .collect(Collectors.toList());
 
 
