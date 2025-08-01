@@ -2,6 +2,7 @@ package com.sahil.workforcemgmt.controller;
 
 import com.sahil.workforcemgmt.common.model.response.Response;
 import com.sahil.workforcemgmt.dto.*;
+import com.sahil.workforcemgmt.model.enums.Priority;
 import com.sahil.workforcemgmt.service.TaskManagementService;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,11 @@ public class TaskManagementController {
 
     public TaskManagementController(TaskManagementService taskManagementService) {
         this.taskManagementService = taskManagementService;
+    }
+
+    @GetMapping("/tasks/priority/{priority}")
+    public Response<List<TaskManagementDto>> getTasksByPriority(@PathVariable Priority priority) {
+        return new Response<>(taskManagementService.findTasksByPriority(priority));
     }
 
 

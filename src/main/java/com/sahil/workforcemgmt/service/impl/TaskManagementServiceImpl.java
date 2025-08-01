@@ -4,6 +4,7 @@ import com.sahil.workforcemgmt.common.exception.ResourceNotFoundException;
 import com.sahil.workforcemgmt.dto.*;
 import com.sahil.workforcemgmt.mapper.ITaskManagementMapper;
 import com.sahil.workforcemgmt.model.TaskManagement;
+import com.sahil.workforcemgmt.model.enums.Priority;
 import com.sahil.workforcemgmt.model.enums.Task;
 import com.sahil.workforcemgmt.model.enums.TaskStatus;
 import com.sahil.workforcemgmt.repository.TaskRepository;
@@ -11,6 +12,7 @@ import com.sahil.workforcemgmt.service.TaskManagementService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,15 @@ public class TaskManagementServiceImpl implements TaskManagementService {
     public TaskManagementServiceImpl(TaskRepository taskRepository, ITaskManagementMapper taskMapper) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
+    }
+
+    @Override
+    public List<TaskManagementDto> findTasksByPriority(Priority priority) {
+        if (priority != null) {
+            return taskMapper.modelListToDtoList(taskRepository.findByPriority(priority));
+        }
+
+        return List.of();
     }
 
 
@@ -66,6 +77,9 @@ public class TaskManagementServiceImpl implements TaskManagementService {
             }
             if (item.getDescription() != null) {
                 task.setDescription(item.getDescription());
+            }
+            if (item.getPriority() != null) {
+                task.setPriority(item.getPriority());
             }
             updatedTasks.add(taskRepository.save(task));
         }
