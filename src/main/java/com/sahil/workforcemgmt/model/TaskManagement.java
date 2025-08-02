@@ -15,6 +15,7 @@ public class TaskManagement {
     private String description;
     private TaskStatus status;
     private Long assigneeId; // Simplified from Entity for this assignment
+    private Long taskCreationTime;
     private Long taskDeadlineTime;
     private Priority priority;
 

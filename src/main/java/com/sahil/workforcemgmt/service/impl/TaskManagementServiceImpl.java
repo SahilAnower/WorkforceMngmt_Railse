@@ -55,6 +55,7 @@ public class TaskManagementServiceImpl implements TaskManagementService {
             newTask.setTask(item.getTask());
             newTask.setAssigneeId(item.getAssigneeId());
             newTask.setPriority(item.getPriority());
+            newTask.setTaskCreationTime(System.currentTimeMillis());
             newTask.setTaskDeadlineTime(item.getTaskDeadlineTime());
             newTask.setStatus(TaskStatus.ASSIGNED);
             newTask.setDescription("New task created.");
@@ -135,4 +136,20 @@ public class TaskManagementServiceImpl implements TaskManagementService {
         return taskMapper.modelListToDtoList(filteredTasks);
     }
 
+    private boolean isSmartTask(TaskManagement task, Long startDate, Long endDate) {
+        return task.getStatus() != TaskStatus.CANCELLED &&
+                (task.getStatus() != TaskStatus.COMPLETED ||
+                        (task.getTaskCreationTime() >= startDate && task.getTaskCreationTime() <= endDate));
+    }
+
+    @Override
+    public List<TaskManagementDto> fetchTasksByDateSmart(TaskFetchByDateRequest request) {
+        List<TaskManagement> tasks = taskRepository.findByAssigneeIdIn(request.getAssigneeIds());
+
+        List<TaskManagement> filteredTasks = tasks.stream()
+                .filter(t -> isSmartTask(t, request.getStartDate(), request.getEndDate()))
+                .collect(Collectors.toList());
+
+        return taskMapper.modelListToDtoList(filteredTasks);
+    }
 }
