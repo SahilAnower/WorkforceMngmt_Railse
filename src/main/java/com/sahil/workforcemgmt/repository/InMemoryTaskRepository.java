@@ -50,17 +50,34 @@ public class InMemoryTaskRepository implements TaskRepository{
 
     @Override
     public Optional<TaskManagement> findById(Long id) {
-        return Optional.ofNullable(taskStore.get(id));
+        return Optional.ofNullable(taskStore.get(id)).map(original -> {
+            TaskManagement copy = new TaskManagement();
+            copy.setId(original.getId());
+            copy.setReferenceId(original.getReferenceId());
+            copy.setReferenceType(original.getReferenceType());
+            copy.setTask(original.getTask());
+            copy.setDescription(original.getDescription());
+            copy.setStatus(original.getStatus());
+            copy.setAssigneeId(original.getAssigneeId());
+            copy.setTaskCreationTime(original.getTaskCreationTime());
+            copy.setTaskDeadlineTime(original.getTaskDeadlineTime());
+            copy.setPriority(original.getPriority());
+            return copy;
+        });
     }
 
 
     @Override
     public TaskManagement save(TaskManagement task) {
+        TaskManagement oldTask = null;
         if (task.getId() == null) {
             task.setId(idCounter.incrementAndGet());
+            oldTask = task;
+        }else {
+            oldTask = taskStore.get(task.getId());
         }
         taskStore.put(task.getId(), task);
-        return task;
+        return oldTask;
     }
 
 

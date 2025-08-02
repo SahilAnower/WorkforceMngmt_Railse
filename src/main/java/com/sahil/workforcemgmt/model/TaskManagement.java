@@ -4,7 +4,9 @@ import com.sahil.workforcemgmt.common.model.enums.ReferenceType;
 import com.sahil.workforcemgmt.model.enums.Priority;
 import com.sahil.workforcemgmt.model.enums.Task;
 import com.sahil.workforcemgmt.model.enums.TaskStatus;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 public class TaskManagement {
