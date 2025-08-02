@@ -8,6 +8,7 @@ import com.sahil.workforcemgmt.model.enums.Priority;
 import com.sahil.workforcemgmt.model.enums.Task;
 import com.sahil.workforcemgmt.model.enums.TaskStatus;
 import com.sahil.workforcemgmt.repository.TaskRepository;
+import com.sahil.workforcemgmt.service.CommentService;
 import com.sahil.workforcemgmt.service.TaskManagementService;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,13 @@ import java.util.stream.Collectors;
 public class TaskManagementServiceImpl implements TaskManagementService {
     private final TaskRepository taskRepository;
     private final ITaskManagementMapper taskMapper;
+    private final CommentService commentService;
 
 
-    public TaskManagementServiceImpl(TaskRepository taskRepository, ITaskManagementMapper taskMapper) {
+    public TaskManagementServiceImpl(TaskRepository taskRepository, ITaskManagementMapper taskMapper, CommentService commentService) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
+        this.commentService = commentService;
     }
 
     @Override
@@ -41,7 +44,10 @@ public class TaskManagementServiceImpl implements TaskManagementService {
     public TaskManagementDto findTaskById(Long id) {
         TaskManagement task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
-        return taskMapper.modelToDto(task);
+        List<CommentDto> commentDtos = commentService.findTasksByTaskId(task.getId());
+        TaskManagementDto taskManagementDto = taskMapper.modelToDto(task);
+        taskManagementDto.setCommentDtos(commentDtos);
+        return taskManagementDto;
     }
 
 
