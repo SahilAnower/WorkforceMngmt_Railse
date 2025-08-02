@@ -3,6 +3,7 @@ package com.sahil.workforcemgmt.controller;
 import com.sahil.workforcemgmt.common.model.response.Response;
 import com.sahil.workforcemgmt.dto.*;
 import com.sahil.workforcemgmt.model.enums.Priority;
+import com.sahil.workforcemgmt.service.CommentService;
 import com.sahil.workforcemgmt.service.TaskManagementService;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +13,12 @@ import java.util.List;
 @RequestMapping("/task-mgmt")
 public class TaskManagementController {
     private final TaskManagementService taskManagementService;
+    private final CommentService commentService;
 
 
-    public TaskManagementController(TaskManagementService taskManagementService) {
+    public TaskManagementController(TaskManagementService taskManagementService, CommentService commentService) {
         this.taskManagementService = taskManagementService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/tasks/priority/{priority}")
@@ -33,6 +36,16 @@ public class TaskManagementController {
     @PostMapping("/create")
     public Response<List<TaskManagementDto>> createTasks(@RequestBody TaskCreateRequest request) {
         return new Response<>(taskManagementService.createTasks(request));
+    }
+
+    @PostMapping("/comment/{taskId}")
+    public Response<List<CommentDto>> createComments(@RequestBody CommentCreateRequest request) {
+        return new Response<>(commentService.createComments(request));
+    }
+
+    @PutMapping("/comment")
+    public Response<List<CommentDto>> updateComments(@RequestBody UpdateCommentRequest request) {
+        return new Response<>(commentService.updateComments(request));
     }
 
 

@@ -3,11 +3,14 @@ package com.sahil.workforcemgmt.service.impl;
 import com.sahil.workforcemgmt.common.exception.ResourceNotFoundException;
 import com.sahil.workforcemgmt.dto.*;
 import com.sahil.workforcemgmt.mapper.ITaskManagementMapper;
+import com.sahil.workforcemgmt.model.TaskHistory;
 import com.sahil.workforcemgmt.model.TaskManagement;
 import com.sahil.workforcemgmt.model.enums.Priority;
 import com.sahil.workforcemgmt.model.enums.Task;
 import com.sahil.workforcemgmt.model.enums.TaskStatus;
+import com.sahil.workforcemgmt.repository.TaskHistoryRepository;
 import com.sahil.workforcemgmt.repository.TaskRepository;
+import com.sahil.workforcemgmt.service.CommentService;
 import com.sahil.workforcemgmt.service.TaskManagementService;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +22,16 @@ import java.util.stream.Collectors;
 @Service
 public class TaskManagementServiceImpl implements TaskManagementService {
     private final TaskRepository taskRepository;
+    private final TaskHistoryRepository taskHistoryRepository;
     private final ITaskManagementMapper taskMapper;
+    private final CommentService commentService;
 
 
-    public TaskManagementServiceImpl(TaskRepository taskRepository, ITaskManagementMapper taskMapper) {
+    public TaskManagementServiceImpl(TaskRepository taskRepository, TaskHistoryRepository taskHistoryRepository, ITaskManagementMapper taskMapper, CommentService commentService) {
         this.taskRepository = taskRepository;
+        this.taskHistoryRepository = taskHistoryRepository;
         this.taskMapper = taskMapper;
+        this.commentService = commentService;
     }
 
     @Override
@@ -41,7 +48,12 @@ public class TaskManagementServiceImpl implements TaskManagementService {
     public TaskManagementDto findTaskById(Long id) {
         TaskManagement task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
-        return taskMapper.modelToDto(task);
+        List<CommentDto> commentDtos = commentService.findTasksByTaskId(task.getId());
+        List<TaskHistory> taskHistories = taskHistoryRepository.findByTaskId(id);
+        TaskManagementDto taskManagementDto = taskMapper.modelToDto(task);
+        taskManagementDto.setCommentDtos(commentDtos);
+        taskManagementDto.setTaskHistories(taskHistories);
+        return taskManagementDto;
     }
 
 
