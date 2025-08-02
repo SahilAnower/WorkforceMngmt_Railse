@@ -42,6 +42,7 @@ public class InMemoryTaskRepository implements TaskRepository{
         newTask.setStatus(status);
         newTask.setPriority(priority);
         newTask.setDescription("This is a seed task.");
+        newTask.setTaskCreationTime(System.currentTimeMillis());
         newTask.setTaskDeadlineTime(System.currentTimeMillis() + 86400000); // 1 day from now
         taskStore.put(newId, newTask);
     }

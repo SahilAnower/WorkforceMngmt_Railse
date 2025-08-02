@@ -10,6 +10,7 @@ public interface TaskManagementService {
     List<TaskManagementDto> updateTasks(UpdateTaskRequest request);
     String assignByReference(AssignByReferenceRequest request);
     List<TaskManagementDto> findTasksByPriority(Priority priority);
+    List<TaskManagementDto> fetchTasksByDateSmart(TaskFetchByDateRequest request);
     List<TaskManagementDto> fetchTasksByDate(TaskFetchByDateRequest request);
     TaskManagementDto findTaskById(Long id);
 }
